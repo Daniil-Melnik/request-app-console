@@ -41,6 +41,18 @@ public class Request {
         this.status = RequestStatus.NEW;
     }
 
+    public RequestStatus getStatus() {
+        return status;
+    }
+
+    public void setExecutor(Employee e) {
+        this.executor = e;
+    }
+
+    public void setStatus(RequestStatus s){
+        this.status = s;
+    }
+
     public Request(String n, Employee a, Employee e,
                    String d, LocalDateTime dD) {
         this();
