@@ -1,6 +1,7 @@
 package medan.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 
@@ -52,6 +53,8 @@ public class Request {
     public void setStatus(RequestStatus s){
         this.status = s;
     }
+
+    public void setCreatedDate(LocalDateTime d) { this.createdDate = d;}
 
     public Request(String n, Employee a, Employee e,
                    String d, LocalDateTime dD) {

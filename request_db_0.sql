@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict rscuddaeuzEXWjNT822fEljvnjiK4HdohKHbOsrThxcgCVIqXwSxD572bh2uZ3Q
+\restrict sk3BrDbcsrpicAYl4psjoP7zXTECDymg92fJZ7eplad6pqowhnIfKJQdn7lz3FB
 
 -- Dumped from database version 17.10
--- Dumped by pg_dump version 18.1
+-- Dumped by pg_dump version 17.10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -18,19 +18,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: request_status; Type: TYPE; Schema: public; Owner: postgres
---
-
-CREATE TYPE public.request_status AS ENUM (
-    'NEW',
-    'IN_PROGRESS',
-    'COMPLETED'
-);
-
-
-ALTER TYPE public.request_status OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -84,7 +71,7 @@ CREATE TABLE public.requests (
     executor_id integer NOT NULL,
     description text,
     due_date timestamp with time zone NOT NULL,
-    status public.request_status DEFAULT 'NEW'::public.request_status NOT NULL
+    status character varying(50) DEFAULT 'NEW'::character varying NOT NULL
 );
 
 
@@ -119,8 +106,8 @@ ALTER SEQUENCE public.requests_id_seq OWNED BY public.requests.id;
 CREATE TABLE public.status_history (
     id integer NOT NULL,
     request_id integer NOT NULL,
-    old_status public.request_status,
-    new_status public.request_status NOT NULL,
+    old_status character varying(50),
+    new_status character varying(50) NOT NULL,
     changed_at timestamp with time zone DEFAULT now(),
     changed_by integer
 );
@@ -326,5 +313,5 @@ ALTER TABLE ONLY public.status_history
 -- PostgreSQL database dump complete
 --
 
-\unrestrict rscuddaeuzEXWjNT822fEljvnjiK4HdohKHbOsrThxcgCVIqXwSxD572bh2uZ3Q
+\unrestrict sk3BrDbcsrpicAYl4psjoP7zXTECDymg92fJZ7eplad6pqowhnIfKJQdn7lz3FB
 
