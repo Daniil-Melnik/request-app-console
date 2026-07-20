@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 121QaYkO8m9s5yLdnh3auNU8bZPpdixHHDKL3SzZDacksrEjKYsMFqJQveJ4BQi
+\restrict sk3BrDbcsrpicAYl4psjoP7zXTECDymg92fJZ7eplad6pqowhnIfKJQdn7lz3FB
 
 -- Dumped from database version 17.10
 -- Dumped by pg_dump version 17.10
@@ -236,6 +236,48 @@ ALTER TABLE ONLY public.status_history
 
 
 --
+-- Name: idx_requests_due_date; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_requests_due_date ON public.requests USING btree (due_date);
+
+
+--
+-- Name: idx_requests_executor_status; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_requests_executor_status ON public.requests USING btree (executor_id, status);
+
+
+--
+-- Name: idx_requests_status; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_requests_status ON public.requests USING btree (status);
+
+
+--
+-- Name: idx_requests_status_executor_due; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_requests_status_executor_due ON public.requests USING btree (status, executor_id, due_date);
+
+
+--
+-- Name: idx_status_history_changwd_at; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_status_history_changwd_at ON public.status_history USING btree (changed_at);
+
+
+--
+-- Name: idx_status_history_request_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_status_history_request_id ON public.status_history USING btree (request_id);
+
+
+--
 -- Name: requests requests_author_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -271,5 +313,4 @@ ALTER TABLE ONLY public.status_history
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 121QaYkO8m9s5yLdnh3auNU8bZPpdixHHDKL3SzZDacksrEjKYsMFqJQveJ4BQi
-
+\unrestrict sk3BrDbcsrpicAYl4psjoP7zXTECDymg92fJZ7eplad6pqowhnIfKJQdn7lz3FB
