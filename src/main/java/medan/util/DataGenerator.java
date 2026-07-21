@@ -10,9 +10,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Утилитный класс для генерации тестовых данных (сотрудников и заявок).
+ * Использует пакетные вставки для ускорения.
+ */
+
 public class DataGenerator {
 
     private static final Random random = new Random();
+
+    /**
+     * Генерирует заданное количество сотрудников и заявок и сохраняет их в БД
+     * Сотрудники создаются с именами "Employee X", подразделениями "Departament Y", должностями "Position Z"
+     * Заявки получают номера "REQ-000001" и случайные параметры (даты, статусы)
+     *
+     * @param employeeCount количество сотрудников
+     * @param requestCount  количество заявок
+     * @throws RuntimeException если возникает ошибка при работе с БД
+     */
 
     public static void generateEmployeesAndRequests(int employeeCount, int requestCount){
 

@@ -8,11 +8,18 @@ import medan.service.EmployeeService;
 import medan.service.RequestService;
 import medan.service.StatusHistoryService;
 import medan.util.DataGenerator;
+import medan.util.PrintUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
+
+/**
+ * Консольное приложение для учёта заявок сотрудников.
+ * Предоставляет меню для выполнения всех операций: создание, редактирование,
+ * фильтрация, отчёты, генерация тестовых данных, замер производительности.
+ */
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
@@ -22,7 +29,7 @@ public class Main {
     public static void main(String[] args) {
         boolean exit = false;
         while (!exit){
-            printMenu();
+            PrintUtil.printMenu();
             String input = scanner.nextLine();
             switch (input){
                 case "0":
@@ -47,7 +54,7 @@ public class Main {
                     showRequests();
                     break;
                 case "7":
-                    printEmployees();
+                    showEmployees();
                     break;
                 case "8":
                     showReport();
@@ -70,28 +77,10 @@ public class Main {
         }
     }
 
-    private static void printMenu() {
-        System.out.println("\n============== МЕНЮ =============");
-        System.out.println("Сотрудники:");
-        System.out.println("  1  -> Добавить сотрудника");
-        System.out.println("  2  -> Редактировать сотрудника");
-        System.out.println("  7  -> Показать сотрудников");
-        System.out.println("Заявки:");
-        System.out.println("  3  -> Создать заявку");
-        System.out.println("  4  -> Изменить статус заявки");
-        System.out.println("  5  -> Назначить исполнителя");
-        System.out.println("  6  -> Показать заявки");
-        System.out.println("  12 -> Показать заявку по номеру");
-        System.out.println("Отчетность и история:");
-        System.out.println("  8  -> Отчётность");
-        System.out.println("  11 -> История статусов заявок");
-        System.out.println("Утилиты:");
-        System.out.println("  9  -> Заполнить тестовыми данными");
-        System.out.println("  10 -> Замерить производительность");
-        System.out.println("0 -> Выход");
-        System.out.print("Выберите пункт: ");
-    }
-
+    /**
+     * Обработчик пункта меню "Добавить сотрудника"
+     * Запрашивает у пользователя ФИО, подразделение, должность и вызывает сервис для сохранения
+     */
     private static void addEmployee(){
         EmployeeService service = new EmployeeService();
 
@@ -105,6 +94,12 @@ public class Main {
         service.createEmployee(name, departament, position);
         System.out.printf("Добавлен сотрудник %s с должностью - %s в подразделении - %s\n", name, position, departament);
     }
+
+    /**
+     * Обработчик пункта меню "Создать заявку"
+     * Запрашивает ID автора, исполнителя, описание и срок, создаёт заявку через сервис
+     * Перехватывает исключения и выводит понятные сообщения
+     */
 
     private static void createRequest(){
         System.out.println("\n======== СОЗДАНИЕ ЗАЯВКИ ========");
@@ -130,37 +125,10 @@ public class Main {
 
     }
 
-    private static void printEmployees(){
-        int maxIdLen = 14;
-        int maxNameLen = 80;
-        int maxDepartamentLen = 40;
-        int maxPositionLen = 40;
-
-        EmployeeService service = new EmployeeService();
-        List<Employee> employees = service.getAllEmployees();
-        System.out.println("\n======== СОТРУДНИКИ ========");
-        System.out.println(
-                "|" + " ".repeat(maxIdLen / 2 - 1) + "id" + " ".repeat(maxIdLen / 2 - 1) +
-                "|" + " ".repeat(maxNameLen / 2 - 1) + "name" + " ".repeat(maxNameLen / 2 - 1) +
-                        "|" + " ".repeat(maxDepartamentLen / 2 - 6) + "departament" + " ".repeat(maxDepartamentLen / 2 - 6) +
-                        "|" + " ".repeat(maxPositionLen / 2 - 4) + "position" + " ".repeat(maxPositionLen / 2 - 4) + "|");
-        System.out.println("|" + "=".repeat(maxIdLen + maxNameLen + maxDepartamentLen + maxPositionLen + 4) + "|");
-        employees.forEach(emp -> {
-            int nameLen = emp.getFullName().length();
-            int departLen = emp.getDepartament().length();
-            int posLen = emp.getPosition().length();
-            int idLen = String.valueOf(emp.getId()).length();
-
-            System.out.println(
-                    "|" + emp.getId() + " ".repeat(maxIdLen - idLen) +
-                    "|" + emp.getFullName() + " ".repeat(maxNameLen - nameLen + 2) +
-                    "|" + emp.getDepartament() + " ".repeat(maxDepartamentLen - departLen - 1) +
-                    "|" + emp.getPosition() + " ".repeat(maxPositionLen - posLen) + "|");
-
-        });
-
-        System.out.println("=".repeat(maxIdLen + maxNameLen + maxDepartamentLen + maxPositionLen + 1 + 4 + 1));
-    }
+    /**
+     * Обработчик пункта меню "Редактировать сотрудника"
+     * Запрашивает ID, загружает текущие данные, позволяет изменить поля (оставить пустыми — без изменений)
+     */
 
     private static void updateEmployee(){
         System.out.println("\n======== РЕДАКТИРОВАНИЕ СОТРУДНИКА ========");
@@ -194,6 +162,22 @@ public class Main {
         }
     }
 
+    /**
+     * Обработчик пункта меню "Показать сотрудников".
+     * Выводит всех сотрудников в табличном виде.
+     */
+    private static void showEmployees(){
+        EmployeeService service = new EmployeeService();
+        List<Employee> employees = service.getAllEmployees();
+        System.out.println("\n======== СОТРУДНИКИ ========");
+        PrintUtil.printEmployees(employees);
+    }
+
+    /**
+     * Обработчик пункта меню "Показать заявки"
+     * Запрашивает параметры фильтрации (статус, исполнитель, подразделение, просроченность)
+     * и выводит отфильтрованный список заявок в табличном виде
+     */
     private static void showRequests(){
         try {
             System.out.println("\n======== ЗАЯВКИ С ФИЛЬТРАЦИЕЙ ========");
@@ -220,7 +204,7 @@ public class Main {
                 System.out.println("Заявок не найдено");
             } else {
                 System.out.printf("Найдено заявок: %s\n", requests.size());
-                printRequests(requests);
+                PrintUtil.printRequests(requests);
             }
         } catch (IllegalArgumentException ex1){
             System.out.println("Неверное заполнение полей фильтрации: " + ex1.getMessage());
@@ -229,15 +213,23 @@ public class Main {
         }
     }
 
+    /**
+     * Обработчик пункта меню "Показать заявку по номеру"
+     * Запрашивает номер и выводит полную информацию о заявке
+     */
     private static void showRequest(){
         System.out.println("\n======== ПРОСМОТР ЗАЯВКИ ========");
         System.out.print("Введите номер заявки: ");
         String requestNumber = scanner.nextLine();
         RequestService service = new RequestService();
         Request request = service.findRequestByNumber(requestNumber);
-        printRequest(request);
+        PrintUtil.printRequest(request);
     }
 
+    /**
+     * Обработчик пункта меню "Назначить исполнителя"
+     * Запрашивает ID заявки и ID нового исполнителя, обновляет заявку
+     */
     private static void assignExecutor() {
         try {
             System.out.println("\n======== НАЗНАЧИТЬ ИСПОЛНИТЕЛЯ ========");
@@ -255,10 +247,21 @@ public class Main {
         }
     }
 
+    /**
+     * Обработчик пункта меню "Отчётность"
+     * Выводит статистику: количество заявок по статусам, просроченные, выполненные по исполнителям
+     */
+
     private static void showReport(){
         RequestService service = new RequestService();
         service.printReport();
     }
+
+    /**
+     * Обработчик пункта меню "Изменить статус заявки"
+     * Запрашивает ID заявки, новый статус и ID сотрудника, выполняющего изменение
+     * Проверяет допустимость перехода через бизнес-правила
+     */
 
     private static void changeStatus() {
         try {
@@ -286,41 +289,10 @@ public class Main {
         }
     }
 
-    private static void printRequests(List<Request> reqs){
-        int maxIdLen = 10;
-        int maxNumberLen = 22;
-        int maxStatusLen = 12;
-        int maxDueDateLen = 28;
-        int maxExecutorFullName = 80;
-
-        System.out.println(
-                "|" + " ".repeat(maxIdLen / 2 - 1) + "id" + " ".repeat(maxIdLen / 2 - 1) +
-                "|" + " ".repeat(maxNumberLen / 2 - 3) + "number" + " ".repeat(maxNumberLen / 2 - 3) +
-                "|" + " ".repeat(maxStatusLen / 2 - 3) + "status" + " ".repeat(maxStatusLen / 2 - 3) +
-                "|" + " ".repeat(maxDueDateLen / 2 - 4) + "due date" + " ".repeat(maxDueDateLen / 2 - 4) +
-                "|" + " ".repeat(maxExecutorFullName / 2 - 4) + "executor" + " ".repeat(maxExecutorFullName / 2 - 4) +
-                "|"
-        );
-
-        System.out.println(" ".repeat(maxIdLen + maxNumberLen + maxStatusLen + maxDueDateLen + maxExecutorFullName + 6));
-
-        reqs.forEach(r -> {
-            int idLen = String.valueOf(r.getId()).length();
-            int numberLen = r.getNumber().length();
-            int statusLen = r.getStatus().toString().length();
-            int dueDateLen = r.getDueDate().toString().length();
-            int executorNameLen = r.getExecutor().getFullName().length();
-
-            System.out.println("|" + r.getId() + " ".repeat(maxIdLen - idLen) +
-                    "|" + r.getNumber() + " ".repeat(maxNumberLen - numberLen) +
-                    "|" + r.getStatus() + " ".repeat(maxStatusLen - statusLen) +
-                    "|" + r.getDueDate() + " ".repeat(maxDueDateLen - dueDateLen) +
-                    "|" + r.getExecutor().getFullName() + " ".repeat(maxExecutorFullName - executorNameLen) +
-                    "|");
-        });
-        System.out.println(" ".repeat(maxIdLen + maxNumberLen + maxStatusLen + maxDueDateLen + maxExecutorFullName + 6));
-    }
-
+    /**
+     * Обработчик пункта меню "История статусов заявок"
+     * Запрашивает номер заявки (или ALL) и выводит историю изменений статусов
+     */
     private static void showStatusOfRequests(){
         System.out.println("\n======== ИСТОРИЯ ИЗМЕНЕНИЯ СТАТУСОВ ========");
         System.out.print("Введите номер заявки (ALL): ");
@@ -334,13 +306,18 @@ public class Main {
             if (statuses.isEmpty()){
                 System.out.println("Записи о изменениях статусов не найдены");
             } else {
-                printStatuses(statuses);
+                PrintUtil.printStatuses(statuses);
             }
         } catch (Exception ex){
             System.out.println(ex.getMessage());
         }
     }
 
+    /**
+     * Обработчик пункта меню "Замерить производительность"
+     * Выполняет несколько раз запрос просроченных заявок в работе для указанного исполнителя
+     * замеряет время и выводит среднее, минимальное, максимальное время
+     */
     private static void measurePerformance() {
         try {
             System.out.println("\n======== ЗАМЕР ПРОИЗВОДИТЕЛЬНОСТИ ========");
@@ -382,6 +359,10 @@ public class Main {
         }
     }
 
+    /**
+     * Обработчик пункта меню "Заполнить тестовыми данными"
+     * Запрашивает количество сотрудников и заявок, вызывает генератор
+     */
     private static void generateTestData() {
         try {
             System.out.println("\n======== ГЕНЕРАЦИЯ ТЕСТОВЫХ ДАННЫХ =========");
@@ -395,58 +376,5 @@ public class Main {
         } catch (Exception e) {
             System.err.println("Ошибка генерации: " + e.getMessage());
         }
-    }
-
-    private static void printStatuses(List<StatusHistory> statuses){
-        int maxIdLen = 14;
-        int maxRequestIdLen = 22;
-        int maxStatusLen = 12;
-        int maxNameLen = 80;
-
-        System.out.println("|" + " ".repeat(maxIdLen / 2 - 1) + "id" + " ".repeat(maxIdLen / 2 - 1) +
-                "|" + " ".repeat(maxRequestIdLen / 2 - 3) + "number" + " ".repeat(maxRequestIdLen / 2 - 3) +
-                "|" + " ".repeat(maxStatusLen / 2 - 5) + "old status" + " ".repeat(maxStatusLen / 2 - 5) +
-                "|" + " ".repeat(maxStatusLen / 2 - 5) + "new status" + " ".repeat(maxStatusLen / 2 - 5) +
-                "|" + " ".repeat(maxNameLen / 2 - 7) + "name changed by" + " ".repeat(maxNameLen / 2 - 7) +
-                "|"
-        );
-
-        System.out.println("=".repeat(maxIdLen + maxRequestIdLen + maxStatusLen * 2 + maxNameLen + 6));
-
-        statuses.forEach(s -> {
-            long sid = s.getId();
-            String rNumber = s.getRequest().getNumber();
-            String oldStatus = s.getOldStatus().toString();
-            String newStatus = s.getNewStatus().toString();
-            String name = s.getChangedBy().getFullName();
-
-            int idLen = String.valueOf(sid).length();
-            int numberLen = rNumber.length();
-            int oldStatusLen = oldStatus.length();
-            int newStatusLen = newStatus.length();
-            int nameLen = name.length();
-
-            System.out.println("|" + sid + " ".repeat(maxIdLen - idLen) +
-                    "|" + rNumber + " ".repeat(maxRequestIdLen - numberLen) +
-                    "|" + oldStatus + " ".repeat(maxStatusLen - oldStatusLen) +
-                    "|" + newStatus + " ".repeat(maxStatusLen - newStatusLen) +
-                    "|" + name + " ".repeat(maxNameLen - nameLen) +
-                    "|"
-            );
-        });
-        System.out.println("=".repeat(maxIdLen + maxRequestIdLen + maxStatusLen * 2 + maxNameLen + 6));
-    }
-
-    private static void printRequest(Request request){
-        System.out.println("======= ЗАЯВКА ========");
-        System.out.printf("            ID -> %s\n", request.getId());
-        System.out.printf("         Номер -> %s\n", request.getNumber());
-        System.out.printf(" Дата создания -> %s\n", request.getCreatedDate());
-        System.out.printf("Срок испонения -> %s\n", request.getDueDate());
-        System.out.printf("         Автор -> %s\n", request.getAuthor().getFullName());
-        System.out.printf("   Исполнитель -> %s\n", request.getExecutor().getFullName());
-        System.out.printf("      Описание -> %s\n", request.getDescription());
-        System.out.printf("        Статус -> %s\n\n", request.getStatus());
-
     }
 }

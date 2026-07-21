@@ -4,6 +4,11 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
+/**
+ * Сущность "Сотрудник". Хранит персональные данные: ФИО, подразделение, должность
+ * Используется как автор или исполнитель заявок
+ */
+
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -21,7 +26,18 @@ public class Employee {
     @Column(nullable = false, length = 100)
     private String position;
 
+    /**
+     * Конструктор без параметров
+     */
     public Employee(){}
+
+    /**
+     * Конструктор для создания нового сотрудника
+     *
+     * @param fullName    полное имя
+     * @param departament подразделение
+     * @param position    должность
+     */
 
     public Employee(String fullName, String departament, String position){
         this.fullName = fullName;

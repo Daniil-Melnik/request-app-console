@@ -17,8 +17,20 @@ import medan.util.JpaUtil;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/**
+ * Репозиторий для доступа к данным заявок.
+ * Содержит методы поиска, сохранения, обновления, фильтрации, статистики и замера производительности.
+ */
+
 public class RequestDao {
 
+    /**
+     * Находит заявку по ID с подгрузкой исполнителя и автора.
+     *
+     * @param id идентификатор
+     * @return заявка
+     * @throws EntityNotFoundExeption если заявка не найдена
+     */
     public Request findById(long id){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -34,6 +46,13 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Находит заявку по её уникальному номеру с подгрузкой исполнителя и автора.
+     *
+     * @param number номер заявки
+     * @return заявка
+     * @throws EntityNotFoundExeption если заявка не найдена
+     */
     public Request findByNumber(String number){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -49,6 +68,13 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Возвращает ID заявки по её номеру (без загрузки сущности).
+     *
+     * @param number номер заявки
+     * @return ID заявки
+     * @throws EntityNotFoundExeption если заявка не найдена
+     */
     public Long findIdByNumber(String number){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -62,6 +88,11 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Сохраняет новую заявку в БД.
+     *
+     * @param r заявка (без ID)
+     */
     public void save(Request r){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -76,6 +107,11 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Обновляет существующую заявку.
+     *
+     * @param r заявка с заполненным ID
+     */
     public void update(Request r){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -90,6 +126,15 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Изменяет статус заявки с проверкой бизнес-правил и записью в историю.
+     *
+     * @param requestId           ID заявки
+     * @param newStatus           новый статус
+     * @param changedByEmployeId  ID сотрудника, выполнившего изменение
+     * @throws EntityNotFoundExeption если заявка или сотрудник не найдены
+     * @throws InvalidStatusTransitionExeption если переход недопустим
+     */
     public void updateStatus(long requestId, RequestStatus newStatus, long changedByEmployeId){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -125,6 +170,13 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Назначает нового исполнителя для заявки.
+     *
+     * @param requestId      ID заявки
+     * @param newExecutorId  ID нового исполнителя
+     * @throws EntityNotFoundExeption если заявка или исполнитель не найдены
+     */
     public void updateExecutor(long requestId, long newExecutorId){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -149,6 +201,15 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Возвращает список заявок по динамическим фильтрам.
+     *
+     * @param status     статус (может быть null)
+     * @param executorId ID исполнителя (может быть null)
+     * @param department подразделение (может быть null)
+     * @param overdue    true – только просроченные, false – все
+     * @return список заявок (может быть пустым)
+     */
     public List<Request> findWithFilters(RequestStatus status, Long executorId,
                                          String department, Boolean overdue){
         EntityManager em = JpaUtil.getEntityManager();
@@ -183,6 +244,11 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Возвращает количество заявок по каждому статусу.
+     *
+     * @return Map<Статус, Количество>
+     */
     public Map<RequestStatus, Long> countByStatus(){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -200,6 +266,11 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Возвращает общее количество просроченных заявок.
+     *
+     * @return количество
+     */
     public long countOverDue(){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -210,6 +281,11 @@ public class RequestDao {
         }
     }
 
+    /**
+     * Возвращает количество выполненных заявок по каждому исполнителю (по полному имени).
+     *
+     * @return Map<Имя исполнителя, Количество>
+     */
     public Map<String, Long> countCompletedByExecutor(){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -226,23 +302,14 @@ public class RequestDao {
         }
     }
 
-    public List<Request> getOverDueInProgressForExecutor(long executorId){
-        EntityManager em = JpaUtil.getEntityManager();
-        try {
-            String jpql = "SELECT r FROM Request r " +
-                    "WHERE r.executor.id = :execId " +
-                    "AND r.status = :status " +
-                    "AND r.dueDate < CURRENT_TIMESTAMP " +
-                    "ORDER BY r.dueDate";
-
-            TypedQuery<Request> query = em.createQuery(jpql, Request.class);
-            query.setParameter("execId", executorId);
-            query.setParameter("status", RequestStatus.IN_PROGRESS);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
+    /**
+     * Возвращает просроченные заявки в статусе IN_PROGRESS для указанного исполнителя,
+     * отсортированные по сроку выполнения.
+     * Используется для замера производительности.
+     *
+     * @param executorId ID исполнителя
+     * @return список заявок
+     */
 
     public List<Request> getOverdueInProgressForExecutor(Long executorId) {
         EntityManager em = JpaUtil.getEntityManager();

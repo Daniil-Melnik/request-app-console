@@ -5,6 +5,11 @@ import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 
+/**
+ * Сущность "Заявка". Содержит всю информацию о заявке: номер, автор, исполнитель,
+ * даты, статус, описание. Статус изменяется по правилам бизнес-логики
+ */
+
 @Entity
 @Table(name = "requests")
 public class Request {
@@ -37,6 +42,10 @@ public class Request {
     @Column(nullable = false)
     private RequestStatus status;
 
+    /**
+     * Конструктор без параметров
+     * Устанавливает текущую дату создания и статус NEW.
+     */
     public Request(){
         this.createdDate = LocalDateTime.now();
         this.status = RequestStatus.NEW;
@@ -63,6 +72,15 @@ public class Request {
 
     public void setCreatedDate(LocalDateTime d) { this.createdDate = d;}
 
+    /**
+     * Конструктор для создания новой заявки. Устанавливает текущую дату и статус NEW.
+     *
+     * @param n      уникальный номер заявки
+     * @param a      автор (сотрудник)
+     * @param e    исполнитель
+     * @param d текстовое описание
+     * @param dD     срок выполнения
+     */
     public Request(String n, Employee a, Employee e,
                    String d, LocalDateTime dD) {
         this();

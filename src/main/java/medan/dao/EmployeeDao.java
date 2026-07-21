@@ -8,7 +8,19 @@ import medan.util.JpaUtil;
 
 import java.util.List;
 
+/**
+ * Репозиторий для доступа к данным сотрудников.
+ * Использует EntityManager для CRUD-операций.
+ */
+
 public class EmployeeDao {
+
+    /**
+     * Находит сотрудника по ID.
+     *
+     * @param id идентификатор
+     * @return найденный сотрудник
+     */
     public Employee findById(long id){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -22,6 +34,11 @@ public class EmployeeDao {
         }
     }
 
+    /**
+     * Возвращает список всех сотрудников.
+     *
+     * @return список сотрудников (может быть пустым)
+     */
     public List<Employee> findAll(){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -32,6 +49,11 @@ public class EmployeeDao {
         }
     }
 
+    /**
+     * Сохраняет нового сотрудника в БД.
+     *
+     * @param e сотрудник (без ID)
+     */
     public void save(Employee e){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -46,6 +68,11 @@ public class EmployeeDao {
         }
     }
 
+    /**
+     * Обновляет существующего сотрудника.
+     *
+     * @param e сотрудник с заполненным ID
+     */
     public void update(Employee e){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -60,6 +87,11 @@ public class EmployeeDao {
         }
     }
 
+    /**
+     * Удаляет сотрудника по ID.
+     *
+     * @param id идентификатор
+     */
     public void delete(long id){
         EntityManager em = JpaUtil.getEntityManager();
         try {

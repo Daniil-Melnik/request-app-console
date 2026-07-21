@@ -7,7 +7,18 @@ import medan.util.JpaUtil;
 
 import java.util.List;
 
+/**
+ * Репозиторий для доступа к записям истории статусов.
+ */
+
 public class StatusHistoryDao {
+    /**
+     * Возвращает все записи истории для заданной заявки, отсортированные по времени изменения.
+     * Загружает связанные сущности (changedBy и request) через JOIN FETCH.
+     *
+     * @param requestId ID заявки
+     * @return список записей (может быть пустым)
+     */
     public List<StatusHistory> findByRequest(long requestId){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -22,6 +33,11 @@ public class StatusHistoryDao {
         }
     }
 
+    /**
+     * Возвращает все записи истории для всех заявок.
+     *
+     * @return список всех записей (может быть пустым)
+     */
     public List<StatusHistory> findAll(){
         EntityManager em = JpaUtil.getEntityManager();
         try {
@@ -32,6 +48,11 @@ public class StatusHistoryDao {
         }
     }
 
+    /**
+     * Сохраняет новую запись истории в БД.
+     *
+     * @param history запись истории
+     */
     public void save(StatusHistory history){
         EntityManager em = JpaUtil.getEntityManager();
         try {

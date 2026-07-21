@@ -4,6 +4,11 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * Сущность для хранения истории изменений статусов заявок.
+ * Содержит ссылку на заявку, старый и новый статус, время изменения и сотрудника, выполнившего изменение.
+ */
+
 @Entity
 @Table(name = "status_history")
 public class StatusHistory {
@@ -30,6 +35,11 @@ public class StatusHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "changed_by")
     private Employee changedBy;
+
+    /**
+     * Конструктор без параметров
+     * Устанавливает текущее время изменения
+     */
 
     public StatusHistory(){
         this.changedAt = LocalDateTime.now();

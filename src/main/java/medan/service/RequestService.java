@@ -10,10 +10,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Сервис для работы с заявками. Содержит методы создания, изменения статуса,
+ * назначения исполнителя, фильтрации, формирования отчётов и замера производительности.
+ */
 public class RequestService {
     private final RequestDao requestDao = new RequestDao();
     private final EmployeeDao employeeDao = new EmployeeDao();
 
+    /**
+     * Создаёт новую заявку с заданными параметрами.
+     * Генерирует уникальный номер.
+     *
+     * @param authorId    ID автора
+     * @param executorId  ID исполнителя
+     * @param description описание
+     * @param dueDate     срок выполнения
+     * @return созданная заявка
+     */
     public Request createRequest(long authorId, long executorId, String description, LocalDateTime dueDate){
         Employee author = employeeDao.findById(authorId);
         Employee executor = employeeDao.findById(executorId);
@@ -25,10 +39,22 @@ public class RequestService {
         return request;
     }
 
+    /**
+     * Находит ID заявки по её номеру
+     *
+     * @param number уникальный номер заявки
+     * @return ID заявки или null, если не найдена (в DAO выбрасывается исключение, если не найдена)
+     */
     public Long findIdByRequestNumber(String number){
         return (new RequestDao()).findIdByNumber(number);
     }
 
+    /**
+     * Находит заявку по номеру с полной загрузкой автора и исполнителя.
+     *
+     * @param number номер заявки
+     * @return заявка
+     */
     public Request findRequestByNumber(String number){
         return (new RequestDao()).findByNumber(number);
     }
@@ -37,18 +63,47 @@ public class RequestService {
         return String.format("REQ-%s", System.currentTimeMillis());
     }
 
+    /**
+     * Изменяет статус заявки с проверкой допустимости перехода.
+     * При успешном изменении записывает запись в историю.
+     *
+     * @param requestId            ID заявки
+     * @param newStatus            новый статус
+     * @param changedByEmployeeId  ID сотрудника, выполнившего изменение (может быть null)
+     */
     public void changeStatus(long requestId, RequestStatus newStatus, Long changedByEmployeeId){
         requestDao.updateStatus(requestId, newStatus, changedByEmployeeId);
     }
 
+    /**
+     * Назначает нового исполнителя для заявки.
+     *
+     * @param requestId    ID заявки
+     * @param newExecutorId ID нового исполнителя
+     */
     public void changeExecutor(Long requestId, Long newExecutorId){
         requestDao.updateExecutor(requestId, newExecutorId);
     }
 
+    /**
+     * Возвращает список заявок по заданным фильтрам.
+     *
+     * @param status     статус (может быть null)
+     * @param executorId ID исполнителя (может быть null)
+     * @param departament подразделение (может быть null)
+     * @param overDue    true – только просроченные, false – все (не зависит от due_date)
+     * @return отфильтрованный список заявок (может быть пустым)
+     */
     public List<Request> filterRequests(RequestStatus status, Long executorId, String departament, Boolean overDue){
         return requestDao.findWithFilters(status, executorId, departament, overDue);
     }
 
+    /**
+     * Выводит отчёт в консоль:
+     * - количество заявок по каждому статусу,
+     * - общее количество просроченных,
+     * - количество выполненных заявок по каждому исполнителю.
+     */
     public void printReport() {
         Map<RequestStatus, Long> byStatus = requestDao.countByStatus();
         long overDue = requestDao.countOverDue();
@@ -67,6 +122,13 @@ public class RequestService {
         }
     }
 
+    /**
+     * Выполняет замер времени выполнения запроса просроченных заявок в статусе IN_PROGRESS
+     * для конкретного исполнителя.
+     *
+     * @param executorId ID исполнителя
+     * @return время выполнения в миллисекундах
+     */
     public long measurePerformance(long executorId) {
         long start = System.nanoTime();
         List<Request> result = requestDao.getOverdueInProgressForExecutor(executorId);
