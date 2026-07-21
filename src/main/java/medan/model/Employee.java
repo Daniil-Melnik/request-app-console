@@ -38,6 +38,7 @@ public class Employee {
     public String getFullName(){ return fullName; }
     public String getDepartament() { return departament; }
     public String getPosition() { return position; }
+    public long getId() { return id; }
 
     public void setFullName(String fN) { this.fullName = fN; }
     public void setDepartament(String d) { this.departament = d;}

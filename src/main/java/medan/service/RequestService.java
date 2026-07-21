@@ -8,6 +8,7 @@ import medan.model.RequestStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class RequestService {
     private final RequestDao requestDao = new RequestDao();
@@ -24,19 +25,45 @@ public class RequestService {
         return request;
     }
 
+    public Long findIdByRequestNumber(String number){
+        return (new RequestDao()).findIdByNumber(number);
+    }
+
+    public Request findRequestByNumber(String number){
+        return (new RequestDao()).findByNumber(number);
+    }
+
     private String generateNumber(){
         return String.format("REQ-%s", System.currentTimeMillis());
     }
 
-    public void changeStatus(long requestId, RequestStatus newStatus, long changedByEmployeeId){
+    public void changeStatus(long requestId, RequestStatus newStatus, Long changedByEmployeeId){
         requestDao.updateStatus(requestId, newStatus, changedByEmployeeId);
     }
 
-    public void changeExecutor(long requestId, long newExecutorId){
+    public void changeExecutor(Long requestId, Long newExecutorId){
         requestDao.updateExecutor(requestId, newExecutorId);
     }
 
-    public List<Request> filterRequests(RequestStatus status, long executorId, String departament, boolean overDue){
+    public List<Request> filterRequests(RequestStatus status, Long executorId, String departament, Boolean overDue){
         return requestDao.findWithFilters(status, executorId, departament, overDue);
+    }
+
+    public void printReport() {
+        Map<RequestStatus, Long> byStatus = requestDao.countByStatus();
+        long overDue = requestDao.countOverDue();
+        Map<String, Long> completedByExecutor = requestDao.countCompletedByExecutor();
+
+        System.out.println("========= ОТЧЁТ =========");
+        System.out.println("Количество заявок по статусам:");
+        for (Map.Entry<RequestStatus, Long> entry : byStatus.entrySet()) {
+            System.out.printf("  %s : %s\n", entry.getKey(), entry.getValue());
+        }
+        System.out.println("Количество просроченных заявок: " + overDue);
+        System.out.println();
+        System.out.println("Количество выполненных заявок по исполнителям:");
+        for (Map.Entry<String, Long> entry : completedByExecutor.entrySet()) {
+            System.out.printf("  %s : %s\n", entry.getKey(), entry.getValue());
+        }
     }
 }

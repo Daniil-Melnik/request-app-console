@@ -22,9 +22,41 @@ public class RequestDao {
     public Request findById(long id){
         EntityManager em = JpaUtil.getEntityManager();
         try {
-            Request r = em.find(Request.class, id);
-            if (r == null) throw new EntityNotFoundExeption(String.format("Заявка с id = %s не найдена", id));
-            return r;
+            String jpql = "SELECT r FROM Request r " +
+                    "JOIN FETCH r.executor " +
+                    "JOIN FETCH r.author " +
+                    "WHERE r.id = :id";
+            TypedQuery<Request> query = em.createQuery(jpql, Request.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public Request findByNumber(String number){
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            String jpql = "SELECT r FROM Request r " +
+                    "JOIN FETCH r.executor " +
+                    "JOIN FETCH r.author " +
+                    "WHERE r.number = :number";
+            TypedQuery<Request> query = em.createQuery(jpql, Request.class);
+            query.setParameter("number", number);
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public Long findIdByNumber(String number){
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            String jpql = "SELECT r.id FROM Request r " +
+                    "WHERE r.number = :number";
+            TypedQuery<Long> query = em.createQuery(jpql, Long.class);
+            query.setParameter("number", number);
+            return query.getSingleResult();
         } finally {
             em.close();
         }
@@ -118,31 +150,33 @@ public class RequestDao {
     }
 
     public List<Request> findWithFilters(RequestStatus status, Long executorId,
-                                         String departament, Boolean overdue){
+                                         String department, Boolean overdue){
         EntityManager em = JpaUtil.getEntityManager();
         try {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Request> cq = cb.createQuery(Request.class);
-            Root<Request> requestRoot = cq.from(Request.class);
-            List<Predicate> predicates = new ArrayList<>();
+            StringBuilder jpql = new StringBuilder(
+                    "SELECT r FROM Request r JOIN FETCH r.executor e WHERE 1=1"
+            );
+            Map<String, Object> params = new HashMap<>();
 
-            if (status != null){
-                predicates.add(cb.equal(requestRoot.get("status"), status));
+            if (status != null) {
+                jpql.append(" AND r.status = :status");
+                params.put("status", status);
             }
-            if (executorId != null){
-                predicates.add(cb.equal(requestRoot.get("executor").get("id"), executorId));
+            if (executorId != null) {
+                jpql.append(" AND e.id = :executorId");
+                params.put("executorId", executorId);
             }
-            if (departament != null && !departament.isEmpty()){
-                predicates.add(cb.equal(requestRoot.get("executor").get("departament"), departament));
+            if (department != null && !department.isEmpty()) {
+                jpql.append(" AND e.department = :department");
+                params.put("department", department);
             }
-            if (overdue != null && overdue){
-                predicates.add(cb.lessThan(requestRoot.get("dueDate"), LocalDateTime.now()));
+            if (overdue != null && overdue) {
+                jpql.append(" AND r.dueDate < CURRENT_TIMESTAMP");
             }
+            jpql.append(" ORDER BY r.dueDate");
 
-            cq.where(predicates.toArray(new Predicate[0]));
-            cq.orderBy(cb.asc(requestRoot.get("dueDay")));
-
-            TypedQuery<Request> query = em.createQuery(cq);
+            TypedQuery<Request> query = em.createQuery(jpql.toString(), Request.class);
+            params.forEach(query::setParameter);
             return query.getResultList();
         } finally {
             em.close();

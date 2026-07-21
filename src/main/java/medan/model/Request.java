@@ -45,6 +45,13 @@ public class Request {
     public RequestStatus getStatus() {
         return status;
     }
+    public String getNumber() { return number; }
+    public Employee getExecutor() { return executor; }
+    public long getId() { return id; }
+    public LocalDateTime getDueDate() { return dueDate; }
+    public LocalDateTime getCreatedDate() { return createdDate; }
+    public Employee getAuthor() { return author; }
+    public String getDescription() {return description; }
 
     public void setExecutor(Employee e) {
         this.executor = e;

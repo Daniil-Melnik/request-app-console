@@ -12,10 +12,20 @@ public class StatusHistoryDao {
         EntityManager em = JpaUtil.getEntityManager();
         try {
             TypedQuery<StatusHistory> query = em.createQuery(
-                    "SELECT h FROM StatusHistory h WHERE h.request.id = :reqId ORDER BY h.changedAt",
+                    "SELECT h FROM StatusHistory h JOIN FETCH h.changedBy JOIN FETCH h.request WHERE h.request.id = :reqId ORDER BY h.changedAt",
                     StatusHistory.class
             );
             query.setParameter("reqId", requestId);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<StatusHistory> findAll(){
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            TypedQuery<StatusHistory> query = em.createQuery("SELECT s FROM StatusHistory s JOIN FETCH s.changedBy JOIN FETCH s.request", StatusHistory.class);
             return query.getResultList();
         } finally {
             em.close();

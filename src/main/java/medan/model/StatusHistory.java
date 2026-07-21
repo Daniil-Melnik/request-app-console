@@ -41,6 +41,8 @@ public class StatusHistory {
     public LocalDateTime getChangedAt() { return changedAt;}
     public Employee getChangedBy() {return changedBy;}
 
+    public long getId() { return id; }
+
     public void setRequest(Request r) {this.request = r;}
     public void setOldStatus(RequestStatus oS) {this.oldStatus = oS;}
     public void setNewStatus(RequestStatus nS) {this.newStatus = nS;}
