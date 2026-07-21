@@ -22,8 +22,9 @@
 <h2>Описание архитектуры и реализации системы</h2>
 <p>В состав программного комплекса входят две части: база данных и программа-консольная утилита. Программа в свою очередь включает в себя организацию сущностей "Запрос (Request)", "Сотрудник (Employee)" и "Экземпляр истории изменения статусов (StatusHistory)"
 <p></p>
-<p>Указанные сущности описаны в каталоге <a href="src/main/java/medan/model">src/main/java/medan/model</a>. При реализации взаимодействия был применён механиз Hibernate ORM. В кажом классе можно найти описание каркаса БД в виде аннотаций. Базовые дампы можно найти в <a href="request_db_init_with_index.sql">request_db_init_with_index.sql</a> и <a href="request_db_init_without_index.sql">request_db_init_without_index.sql</a></p>.
+<p>Указанные сущности описаны в каталоге <a href="src/main/java/medan/model">src/main/java/medan/model</a>. При реализации взаимодействия был применён механизм Hibernate ORM. В кажом классе можно найти описание каркаса БД в виде аннотаций. Базовые дампы можно найти в <a href="request_db_init_with_index.sql">request_db_init_with_index.sql</a> и <a href="request_db_init_without_index.sql">request_db_init_without_index.sql</a></p>.
 <p>Взаимодействие с СУБД организовано средствами двух прослоек: базовой через Entity-Manager + DAO (<a href="src/main/java/medan/dao">src/main/java/medan/dao</a>, <a href="src/main/java/medan/util/JpaUtil.java">src/main/java/medan/util/JpaUtil.java</a>) и более абстрактной - Service (<a href="src/main/java/medan/service">src/main/java/medan/service</a>)</p>
+<p>На старте и при каждой итерации пользователю выводится меню, пункты которого разобраны по категория. Работа с системой осуществляется через ввод номера пункта меню, соответсвующего нужному действию.Программа обеспечивает бесперебойную работу при некорректном вводе. Местами возможна необходимость дополнительного нажания на клавишу "Enter"</p>
 <h2>Особенности организации базы данных</h2>
 <p>Ниже приведена диаграмма органицайии модели в базе данных:</p>
 <img width="756" height="505" alt="Screenshot_2" src="https://github.com/user-attachments/assets/2e8ef7ee-367b-4be5-95d8-3ef764f721ef" />
@@ -59,7 +60,12 @@
   </ul>
   </li>
 </ul>
-<p></p>При использовании программы можно выполнять следующие действия:
+<p>Запуск программы можно осуществить либо через запуск исполняемого jar-файла: <code>java -jar request-app-console.jar</code></p>
+<p>Также запуск можно осуществить из IDE inteliJ idea</p>
+
+<h2>Работа в программе</h2>
+<p></p>При использовании системы можно выполнять следующие действия:
+<p></p>
 <ul>
   <li>Добавить сотрудника</li>
   <li>Редактировать информацию о сотруднике</li>
@@ -75,6 +81,42 @@
   <li>Просмотреть историю измененения статусов всех заявок или конкретной по номеру</li>
 </ul>
 </p>
+<p>Ниже приведены примеры некоторых действий в системе: </p>
+<p>1. Меню программы</p>
+<img width="291" height="310" alt="1" src="https://github.com/user-attachments/assets/d3d5e232-b313-4251-a343-3665216317c5" />
+<p></p>
+<p>2. Добавление сотрудника</p>
+<img width="585" height="119" alt="2" src="https://github.com/user-attachments/assets/d5b1b212-0bc5-4877-948f-1024385fd376" />
+<img width="1417" height="61" alt="3" src="https://github.com/user-attachments/assets/11ddaf35-e9b7-4624-9946-ba984804a44c" />
+<p>
+<p>3. Редактирование сотрудника</p>
+<img width="599" height="61" alt="4" src="https://github.com/user-attachments/assets/6123b901-f2b5-4942-af55-c78990c646e5" />
+<img width="1417" height="61" alt="5" src="https://github.com/user-attachments/assets/b127a543-07e5-4ab6-8814-e33e40b406de" />
+<p>
+<p>4. Создание заявки</p>
+<img width="429" height="137" alt="6" src="https://github.com/user-attachments/assets/ee61950b-b3f1-4a69-82ef-c0e15d0599f6" />
+<p>
+<p>5. Показ заявок с фильтрацие: новые + Исполнитель с id = 1000. Подразделения все, непросроченные</p>
+<img width="1282" height="238" alt="7" src="https://github.com/user-attachments/assets/94b9a4c5-4210-4fa6-86cc-be6ab19f373e" />
+<p>
+<p>6. Некорректное изменение статуса заявки NEW -> COMPLETED</p>
+<img width="832" height="90" alt="8" src="https://github.com/user-attachments/assets/c0238097-6983-4cf0-90c4-42117508fe37" />
+<p>
+<p>7. Корректное изменение статуса заявки</p>
+<img width="448" height="111" alt="9" src="https://github.com/user-attachments/assets/bf2ed952-24f8-4732-b27d-7f09706b83df" />
+<p>
+<p>8. Назначение исполнителя</p>
+<img width="448" height="94" alt="10" src="https://github.com/user-attachments/assets/24da831d-54db-465f-ae31-2ba7d58901f7" />
+<p></p>
+<p>9. Просмотр изменённой заявки по номеру</p>
+<img width="369" height="247" alt="11" src="https://github.com/user-attachments/assets/979279ff-1fc7-4588-b2f6-70f7d9a624dc" />
+<p></p>
+<p>10. Создание отчёта</p>
+<img width="374" height="246" alt="12" src="https://github.com/user-attachments/assets/a9b16269-c180-4250-b694-a48366f74aa5" />
+<p></p>
+<p>11. Просмотр истории изменения статусов заявки по номеру</p>
+<img width="1184" height="157" alt="13" src="https://github.com/user-attachments/assets/6251558f-ad4f-4e71-849f-78aa2be31a79" />
+<p></p>
 =====================================================================================
 Требования к базе данных
 
