@@ -1,6 +1,5 @@
 package medan;
 
-import medan.dao.RequestDao;
 import medan.model.Employee;
 import medan.model.Request;
 import medan.model.RequestStatus;
@@ -8,6 +7,7 @@ import medan.model.StatusHistory;
 import medan.service.EmployeeService;
 import medan.service.RequestService;
 import medan.service.StatusHistoryService;
+import medan.util.DataGenerator;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -51,6 +51,12 @@ public class Main {
                     break;
                 case "8":
                     showReport();
+                    break;
+                case "9":
+                    generateTestData();
+                    break;
+                case "10":
+                    measurePerformance();
                     break;
                 case "11":
                     showStatusOfRequests();
@@ -334,6 +340,60 @@ public class Main {
         }
     }
 
+    private static void measurePerformance() {
+        try {
+            RequestService service = new RequestService();
+
+            System.out.print("ID исполнителя для поиска просроченных заявок: ");
+            long executorId = Long.parseLong(scanner.nextLine());
+
+            System.out.print("Количество запросов: ");
+            int iterations = Integer.parseInt(scanner.nextLine());
+            if (iterations < 1) iterations = 1;
+
+            System.out.println("Старт");
+            long totalTime = 0;
+            long minTime = Long.MAX_VALUE;
+            long maxTime = 0;
+
+            for (int i = 1; i <= iterations; i++) {
+                long time = service.measurePerformance(executorId);
+                totalTime += time;
+                if (time < minTime) minTime = time;
+                if (time > maxTime) maxTime = time;
+                System.out.printf("  Попытка %d: %d мс%n", i, time);
+            }
+
+            double average = (double) totalTime / iterations;
+            System.out.println("\n======== РЕЗУЛЬТАТЫ ЗАМЕРА =========");
+            System.out.printf("Исполнитель ID: %d%n", executorId);
+            System.out.printf("Количество выполнений: %d%n", iterations);
+            System.out.printf("Среднее время: %.2f мс%n", average);
+            System.out.printf("Минимальное время: %d мс%n", minTime);
+            System.out.printf("Максимальное время: %d мс%n", maxTime);
+            System.out.println("=====================================");
+
+        } catch (NumberFormatException e) {
+            System.out.println("Некорректное число");
+        } catch (Exception e) {
+            System.err.println("Ошибка замера: " + e.getMessage());
+        }
+    }
+
+    private static void generateTestData() {
+        try {
+            System.out.print("Количество сотрудников: ");
+            int empCount = Integer.parseInt(scanner.nextLine());
+            System.out.print("Количество заявок: ");
+            int reqCount = Integer.parseInt(scanner.nextLine());
+            DataGenerator.generateEmployeesAndRequests(empCount, reqCount);
+        } catch (NumberFormatException e) {
+            System.out.println("Некорректное число");
+        } catch (Exception e) {
+            System.err.println("Ошибка генерации: " + e.getMessage());
+        }
+    }
+
     private static void printStatuses(List<StatusHistory> statuses){
         int maxIdLen = 10;
         int maxRequestIdLen = 22;
@@ -344,7 +404,7 @@ public class Main {
                 "|" + " ".repeat(maxRequestIdLen / 2 - 3) + "number" + " ".repeat(maxRequestIdLen / 2 - 3) +
                 "|" + " ".repeat(maxStatusLen / 2 - 5) + "old status" + " ".repeat(maxStatusLen / 2 - 5) +
                 "|" + " ".repeat(maxStatusLen / 2 - 5) + "new status" + " ".repeat(maxStatusLen / 2 - 5) +
-                "|" + " ".repeat(maxNameLen / 2 - 2) + "name" + " ".repeat(maxNameLen / 2 - 2) +
+                "|" + " ".repeat(maxNameLen / 2 - 7) + "name changed by" + " ".repeat(maxNameLen / 2 - 7) +
                 "|"
         );
 

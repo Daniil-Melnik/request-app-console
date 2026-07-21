@@ -66,4 +66,13 @@ public class RequestService {
             System.out.printf("  %s : %s\n", entry.getKey(), entry.getValue());
         }
     }
+
+    public long measurePerformance(long executorId) {
+        long start = System.nanoTime();
+        List<Request> result = requestDao.getOverdueInProgressForExecutor(executorId);
+        long end = System.nanoTime();
+        long elapsedMs = (end - start) / 1_000_000;
+        System.out.printf("Найдено заявок: %s\n", result.size());
+        return elapsedMs;
+    }
 }

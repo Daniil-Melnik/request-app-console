@@ -243,4 +243,21 @@ public class RequestDao {
             em.close();
         }
     }
+
+    public List<Request> getOverdueInProgressForExecutor(Long executorId) {
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            String jpql = "SELECT r FROM Request r " +
+                    "WHERE r.executor.id = :execId " +
+                    "AND r.status = :status " +
+                    "AND r.dueDate < CURRENT_TIMESTAMP " +
+                    "ORDER BY r.dueDate";
+            TypedQuery<Request> query = em.createQuery(jpql, Request.class);
+            query.setParameter("execId", executorId);
+            query.setParameter("status", RequestStatus.IN_PROGRESS);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }
