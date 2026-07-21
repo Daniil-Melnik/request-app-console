@@ -117,6 +117,20 @@
 <p>11. Просмотр истории изменения статусов заявки по номеру</p>
 <img width="1184" height="157" alt="13" src="https://github.com/user-attachments/assets/6251558f-ad4f-4e71-849f-78aa2be31a79" />
 <p></p>
+<h2>Замеры производительности и идеи усовершенствования структуры СУБД</h2>
+<p>В данном проекте рассматривается два случая организации базы данных: "в лоб", когда данные просто хранятся в таблицах и оптимизированные - когда помимо таблиц в БД присутсвую индексы по этим таблицам.</p>
+<p>Для быстрого восстановлени и воспроизводимости БД с индексами и без в корне репозитория лежат чистые .sql-дампы баз данных для обоих случаем</p>
+<p>Для оптимизации работы по <code>WHERE</code> и <code>ORDER BY</code> были созданы индексы :</p>
+<p>Основной: </p>
+<ul>
+  <li><code>CREATE INDEX idx_requests_executor_status_due ON requests (executor_id, status, due_date)</code></li>
+</ul>
+<p>Дополнительные: </p>
+<ul>
+  <li><code>CREATE INDEX idx_requests_executor_status ON requests (executor_id, status)</code></li>
+  <li><code>CREATE INDEX idx_requests_due_date ON requests (due_date)</code></li>
+  <li><code>CREATE INDEX idx_requests_status ON requests (status)</code></li>
+</ul>
 =====================================================================================
 Требования к базе данных
 
