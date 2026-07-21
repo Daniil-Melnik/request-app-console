@@ -1,14 +1,14 @@
 <h1>Система автоматизации регулирования и контроля выполнения заявок в организации</h1>
 <h2>Структура</h2>
 <ul>
-  <li><a href="https://github.com/Daniil-Melnik/request-app-console#краткое-описание-возможностей-и-требований-из-тз"></a>Краткое описание возможностей и требований из ТЗ</li>
-  <li><a href="https://github.com/Daniil-Melnik/request-app-console#по-применённое-при-разработке"></a>ПО применённое при разработке</li>
-  <li><a href="https://github.com/Daniil-Melnik/request-app-console#описание-архитектуры-и-реализации-системы"></a>Описание архитектуры и реализации системы</li>
-  <li><a href="https://github.com/Daniil-Melnik/request-app-console#особенности-организации-базы-данных"></a>Особенности организации базы данных</li>
-  <li><a href="https://github.com/Daniil-Melnik/request-app-console#развёртывание-системы"></a>Развёртывание системы</li>
-  <li><a href="https://github.com/Daniil-Melnik/request-app-console#работа-в-программе"></a>Работа в программе</li>
-  <li><a href="https://github.com/Daniil-Melnik/request-app-console#-идеи-усовершенствования-структуры-бд"></a>Идеи усовершенствования структуры БД</li>
-  <li><a href="https://github.com/Daniil-Melnik/request-app-console#замеры-производительности"></a>Замеры производительности</li>
+  <li><a href="https://github.com/Daniil-Melnik/request-app-console#краткое-описание-возможностей-и-требований-из-тз">Краткое описание возможностей и требований из ТЗ</a></li>
+  <li><a href="https://github.com/Daniil-Melnik/request-app-console#по-применённое-при-разработке">ПО применённое при разработке</a></li>
+  <li><a href="https://github.com/Daniil-Melnik/request-app-console#описание-архитектуры-и-реализации-системы">Описание архитектуры и реализации системы</a></li>
+  <li><a href="https://github.com/Daniil-Melnik/request-app-console#особенности-организации-базы-данных">Особенности организации базы данных</a></li>
+  <li><a href="https://github.com/Daniil-Melnik/request-app-console#развёртывание-системы">Развёртывание системы</a></li>
+  <li><a href="https://github.com/Daniil-Melnik/request-app-console#работа-в-программе">Работа в программе</a></li>
+  <li><a href="https://github.com/Daniil-Melnik/request-app-console#-идеи-усовершенствования-структуры-бд">Идеи усовершенствования структуры БД</a></li>
+  <li><a href="https://github.com/Daniil-Melnik/request-app-console#замеры-производительности">Замеры производительности</a></li>
 </ul>
 <h2>Краткое описание возможностей и требований из ТЗ</h2>
 <p>Изложенный в репозитории проект представляет реализацию простой системы управления заявками в виде приложения с консольным вводом/выводом. Программа отвечает ряду требований изложенных далее.</p>
