@@ -131,7 +131,7 @@ public class Main {
     }
 
     private static void printEmployees(){
-        int maxIdLen = 10;
+        int maxIdLen = 14;
         int maxNameLen = 80;
         int maxDepartamentLen = 40;
         int maxPositionLen = 40;
@@ -196,6 +196,7 @@ public class Main {
 
     private static void showRequests(){
         try {
+            System.out.println("\n======== ЗАЯВКИ С ФИЛЬТРАЦИЕЙ ========");
             System.out.print("Статус (NEW, IN_PROGRESS, COMPLETED) (ALL): ");
             String statusStr = scanner.nextLine().trim();
             RequestStatus status = statusStr.isEmpty() ? null : RequestStatus.valueOf(statusStr.toUpperCase());
@@ -289,7 +290,7 @@ public class Main {
         int maxIdLen = 10;
         int maxNumberLen = 22;
         int maxStatusLen = 12;
-        int maxDueDateLen = 20;
+        int maxDueDateLen = 28;
         int maxExecutorFullName = 80;
 
         System.out.println(
@@ -342,6 +343,7 @@ public class Main {
 
     private static void measurePerformance() {
         try {
+            System.out.println("\n======== ЗАМЕР ПРОИЗВОДИТЕЛЬНОСТИ ========");
             RequestService service = new RequestService();
 
             System.out.print("ID исполнителя для поиска просроченных заявок: ");
@@ -382,6 +384,7 @@ public class Main {
 
     private static void generateTestData() {
         try {
+            System.out.println("\n======== ГЕНЕРАЦИЯ ТЕСТОВЫХ ДАННЫХ =========");
             System.out.print("Количество сотрудников: ");
             int empCount = Integer.parseInt(scanner.nextLine());
             System.out.print("Количество заявок: ");
@@ -395,7 +398,7 @@ public class Main {
     }
 
     private static void printStatuses(List<StatusHistory> statuses){
-        int maxIdLen = 10;
+        int maxIdLen = 14;
         int maxRequestIdLen = 22;
         int maxStatusLen = 12;
         int maxNameLen = 80;

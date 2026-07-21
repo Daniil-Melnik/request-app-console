@@ -21,12 +21,6 @@ public class Employee {
     @Column(nullable = false, length = 100)
     private String position;
 
-    @OneToMany(mappedBy = "author")
-    private List<Request> authoredRequests;
-
-    @OneToMany(mappedBy = "executor")
-    private List<Request> executorRequests;
-
     public Employee(){}
 
     public Employee(String fullName, String departament, String position){
