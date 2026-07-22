@@ -157,7 +157,7 @@ public class Main {
                         current.getPosition(),
                         current.getDepartament());
             }
-        } catch (NumberFormatException ex){
+        } catch (Exception ex){
             System.out.println("Некорректный id пользователя");
         }
     }
@@ -181,15 +181,15 @@ public class Main {
     private static void showRequests(){
         try {
             System.out.println("\n======== ЗАЯВКИ С ФИЛЬТРАЦИЕЙ ========");
-            System.out.print("Статус (NEW, IN_PROGRESS, COMPLETED) (ALL): ");
+            System.out.print("Статус (NEW, IN_PROGRESS, COMPLETED) (умолч. все): ");
             String statusStr = scanner.nextLine().trim();
             RequestStatus status = statusStr.isEmpty() ? null : RequestStatus.valueOf(statusStr.toUpperCase());
 
-            System.out.print("ID исполнителя (ALL): ");
+            System.out.print("ID исполнителя (умолч. все): ");
             String execStr = scanner.nextLine().trim();
             Long executorId = execStr.isEmpty() ? null : Long.parseLong(execStr);
 
-            System.out.print("Подразделение (ALL): ");
+            System.out.print("Подразделение (умолч. все): ");
             String department = scanner.nextLine().trim();
             if (department.isEmpty()) department = null;
 
@@ -291,11 +291,11 @@ public class Main {
 
     /**
      * Обработчик пункта меню "История статусов заявок"
-     * Запрашивает номер заявки (или ALL) и выводит историю изменений статусов
+     * Запрашивает номер заявки и выводит историю изменений статусов
      */
     private static void showStatusOfRequests(){
         System.out.println("\n======== ИСТОРИЯ ИЗМЕНЕНИЯ СТАТУСОВ ========");
-        System.out.print("Введите номер заявки (ALL): ");
+        System.out.print("Введите номер заявки (умолч. все): ");
         String number = scanner.nextLine();
 
         try {
